@@ -82,7 +82,7 @@ def quote(row):
     return dict(data,id=row["id"],revision=row["revision"],verified=bool(row["verified"]),source=row["source"],text=row["text"],image=row["image"],recognition_score=row["score"])
 
 def create_app(data_dir=None,no_demo=False):
-    app=Flask(__name__);setup(app,data_dir or Path(__file__).parent/"data-local")
+    app=Flask(__name__);setup(app,data_dir or Path(__file__).parent/"data-local");app.config["SESSION_COOKIE_NAME"]="tulna_session"
     with connect(app) as conn:
         conn.executescript("CREATE TABLE IF NOT EXISTS quotes(id INTEGER PRIMARY KEY,fields TEXT NOT NULL,text TEXT NOT NULL,source TEXT NOT NULL,image TEXT,score REAL,verified INTEGER NOT NULL DEFAULT 0,revision INTEGER NOT NULL DEFAULT 1); CREATE TABLE IF NOT EXISTS comparisons(id INTEGER PRIMARY KEY,payload TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);")
         if not no_demo and conn.execute("SELECT COUNT(*) FROM quotes").fetchone()[0]==0:

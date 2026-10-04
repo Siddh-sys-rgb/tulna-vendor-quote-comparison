@@ -4,6 +4,8 @@ A procurement notebook for a fictional Ahmedabad print agency: compare paper sup
 
 **Python · Flask · SQLite · RapidOCR / ONNX Runtime · vanilla JavaScript**
 
+Clone commands below use the intended repository URL. If you already have this folder locally, skip `git clone` and `cd`.
+
 ## Setup independently
 
 This folder is a standalone repository. It does not import code or packages from sibling projects. Use **Python 3.10–3.12**; Python 3.13+ is outside the pinned OCR/numerical dependency scope. Dependencies install from PyPI; inference and app workflows then run locally without API keys. macOS/Linux and Windows commands below are installation instructions; the recorded local run used macOS and Python 3.12.14.
@@ -11,6 +13,8 @@ This folder is a standalone repository. It does not import code or packages from
 macOS / Linux:
 
 ```sh
+git clone https://github.com/Siddh-sys-rgb/tulna-vendor-quote-comparison.git
+cd tulna-vendor-quote-comparison
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
@@ -20,6 +24,8 @@ python app.py --port 8110
 Windows PowerShell:
 
 ```powershell
+git clone https://github.com/Siddh-sys-rgb/tulna-vendor-quote-comparison.git
+cd tulna-vendor-quote-comparison
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements-dev.txt

@@ -6,7 +6,7 @@ UNITS = {"sheet": ("sheet", 1), "ream": ("sheet", 500), "each": ("each", 1)}
 def money(value, optional=False):
     if optional and value in (None, ""): return None
     try: amount = Decimal(str(value))
-    except (InvalidOperation, ValueError): raise ValueError("Enter a valid INR amount")
+    except (InvalidOperation, ValueError, TypeError): raise ValueError("Enter a valid INR amount")
     if not amount.is_finite() or amount < 0 or amount > 10000000 or amount.as_tuple().exponent < -2:
         raise ValueError("INR amounts need 0–2 decimal places and must be within 1 crore")
     return int(amount * 100)
@@ -19,24 +19,28 @@ def integer(value, field, maximum=1000000):
 
 def validate(data):
     if not isinstance(data, dict): raise ValueError("Quote must be an object")
-    supplier=str(data.get("supplier", "")).strip()
-    item=str(data.get("item", "")).strip()
+    supplier=data.get("supplier", "")
+    item=data.get("item", "")
+    if not isinstance(supplier,str) or not isinstance(item,str): raise ValueError("Supplier and item must be text")
+    supplier=supplier.strip();item=item.strip()
     if not supplier or len(supplier)>100 or not item or len(item)>100: raise ValueError("Supplier and item need 1–100 characters")
     unit=data.get("unit", "sheet")
-    if unit not in UNITS: raise ValueError("Unit must be sheet, ream or each")
+    if not isinstance(unit,str) or unit not in UNITS: raise ValueError("Unit must be sheet, ream or each")
     quantity=integer(data.get("quantity"), "Quantity")
     line=integer(data.get("evidence_line"), "Evidence line", 1000)
     tax=data.get("tax_percent")
     if tax in (None, ""): tax=None
     else:
         try: tax=Decimal(str(tax))
-        except InvalidOperation: raise ValueError("Invalid tax percent")
+        except (InvalidOperation, ValueError, TypeError): raise ValueError("Invalid tax percent")
         if not tax.is_finite() or tax < 0 or tax > 100 or tax.as_tuple().exponent < -2: raise ValueError("Tax must be 0–100 with at most 2 decimals")
         tax=str(tax)
     delivery=data.get("delivery_days")
     if delivery in (None, ""): delivery=None
     else: delivery=integer(delivery,"Delivery days",365)
-    exclusions=str(data.get("exclusions", "")).strip()
+    exclusions=data.get("exclusions", "")
+    if not isinstance(exclusions,str): raise ValueError("Exclusions must be text")
+    exclusions=exclusions.strip()
     if len(exclusions)>500: raise ValueError("Exclusions exceed 500 characters")
     return dict(supplier=supplier,item=item,unit=unit,quantity=quantity,unit_price_paise=money(data.get("unit_price")),shipping_paise=money(data.get("shipping"), True),tax_percent=tax,delivery_days=delivery,exclusions=exclusions,evidence_line=line)
 
@@ -51,7 +55,8 @@ def parse(text):
             key=aliases[parts[0].strip().lower()]
             fields[key]=parts[1].strip().replace("₹", "").replace("INR", "").strip()
             if key=="unit_price": evidence=index
-    fields.setdefault("supplier","New supplier");fields.setdefault("item","A4 paper 80 GSM");fields.setdefault("quantity","1");fields.setdefault("unit","sheet");fields.setdefault("unit_price","0");fields["evidence_line"]=evidence
+    for key in ("supplier","item","quantity","unit","unit_price","shipping","tax_percent","delivery_days","exclusions"): fields.setdefault(key,"")
+    fields["evidence_line"]=evidence
     return fields
 
 def evaluate(quotes):
@@ -62,6 +67,7 @@ def evaluate(quotes):
         base=q["quantity"]*q["unit_price_paise"]
         tax=None if q["tax_percent"] is None else int((Decimal(base)*Decimal(q["tax_percent"])/100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
         flags=[]
+        if len({other["quantity"]*UNITS[other["unit"]][1] for other in quotes})>1: flags.append("Order quantities differ; volume tiers may change pricing")
         if tax is None: flags.append("Tax missing")
         if q["shipping_paise"] is None: flags.append("Shipping missing")
         if q["delivery_days"] is None: flags.append("Delivery not confirmed")

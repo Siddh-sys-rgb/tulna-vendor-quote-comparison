@@ -16,7 +16,7 @@ def setup(app,data_dir):
         with os.fdopen(descriptor,"w") as handle: handle.write(secrets.token_hex(32))
     except FileExistsError: pass
     app.secret_key=keyfile.read_text().strip()
-    app.config.update(DATABASE=str(folder/"app.sqlite"),DATA_DIR=str(folder),MAX_CONTENT_LENGTH=5*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE="Strict")
+    app.config.update(DATABASE=str(folder/"app.sqlite"),DATA_DIR=str(folder),MAX_CONTENT_LENGTH=5*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE="Strict",TRUSTED_HOSTS=["localhost","127.0.0.1"])
     @app.before_request
     def protect():
         if request.method in {"POST","PUT","DELETE","PATCH"}:

@@ -65,7 +65,7 @@ The exact label format is the bounded parser contract. Arbitrary supplier tables
 ## Scope and purchasing assumptions
 
 - One item specification per supplier quote. A quote's quantity and price refer to its quoted unit; reams contain 500 sheets in this demo.
-- All prices are INR. Inputs allow at most two decimal places. Subtotals, tax and shipping use integer paise; tax rounds once using Decimal half-up. Normalized unit costs display four decimal places.
+- All prices are INR. Inputs allow at most two decimal places. Subtotals, tax and shipping use integer paise; tax rounds once using Decimal half-up. Normalized unit costs display four decimal places; ranking compares the exact unrounded total-per-unit ratios.
 - `Tax: 0` and `Shipping: 0.00` mean explicitly confirmed zero; a blank means unknown. Unknown tax or shipping prevents a landed total and overall ranking.
 - Tax is calculated on the goods subtotal. Shipping is added after that tax. Real invoice/tax rules can differ; percentages in fixtures are illustrative.
 - Exact case-insensitive item-text agreement is required for ranking. No product synonym matching or hidden specification inference is performed.
@@ -114,7 +114,7 @@ python -m pip check
 node --check static/app.js
 ```
 
-Recorded local result: **68 passed**, **98.68% statement coverage**. This includes an actual RapidOCR inference and image-upload acceptance check using `demo/synthetic-quote.png`. That clean authored fixture is **not a real-world OCR benchmark**. The domain has complete statement coverage in this run; total coverage excludes no source lines and includes the CLI entry point. Meaningful checks cover unknown charges, no invented missing price, incomparable units, quantity-tier warnings, monetary rounding, invalid field types, stale edits, immutable snapshots, two competing updates, image validation, CSRF and literal markup.
+Recorded local result: **69 passed**, **98.68% statement coverage**. This includes an actual RapidOCR inference and image-upload acceptance check using `demo/synthetic-quote.png`. That clean authored fixture is **not a real-world OCR benchmark**. The domain has complete statement coverage in this run; total coverage excludes no source lines and includes the CLI entry point. Meaningful checks cover unknown charges, no invented missing price, incomparable units, quantity-tier warnings, monetary rounding, invalid field types, stale edits, immutable snapshots, two competing updates, image validation, CSRF and literal markup.
 
 `constraints-tested.txt` records the exact local environment for reproducibility; it is not imposed on other platforms. The workflow tests Python 3.10 and 3.12 on Linux after publication. Those remote runs are not claimed as already successful by this README.
 

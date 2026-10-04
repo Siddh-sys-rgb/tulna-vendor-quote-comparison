@@ -37,3 +37,10 @@ def test_different_quantity_flag():
 def test_tax_half_up():
     data=base();data.update(quantity=1,unit_price="0.05",tax_percent="10",shipping="0")
     assert evaluate([dict(validate(data),id=1)])["rows"][0]["tax_paise"]==1
+
+def test_ranking_uses_exact_cost_before_display_rounding():
+    data=base();data.update(quantity=1000000,unit='sheet',unit_price='0.01',tax_percent='0',shipping='0.02')
+    first=validate(data);data['shipping']='0.01';second=validate(data)
+    report=evaluate([dict(first,id=1),dict(second,id=2)])
+    assert report['rows'][0]['landed_unit_inr']==report['rows'][1]['landed_unit_inr']
+    assert report['winner_id']==2

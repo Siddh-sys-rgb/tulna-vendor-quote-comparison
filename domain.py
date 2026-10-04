@@ -78,5 +78,5 @@ def evaluate(quotes):
         rows.append(dict(id=q["id"],supplier=q["supplier"],subtotal_paise=base,tax_paise=tax,total_paise=total,normalized_quantity=normalized,normalized_unit=group,landed_unit_inr=landed,flags=flags))
     comparable=len(keys)==1
     candidates=[r for r in rows if r["total_paise"] is not None]
-    winner=min(candidates,key=lambda r:Decimal(r["landed_unit_inr"]))["id"] if comparable and len(candidates)==len(rows) and rows else None
+    winner=min(candidates,key=lambda r:Decimal(r["total_paise"])/r["normalized_quantity"])["id"] if comparable and len(candidates)==len(rows) and rows else None
     return dict(rows=rows,comparable=comparable,winner_id=winner,notes=["Compare quantities and exclusions before choosing a vendor."] + ([] if comparable else ["Different items or unit families cannot be ranked."]))

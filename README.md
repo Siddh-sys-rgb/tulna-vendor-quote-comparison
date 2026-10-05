@@ -4,7 +4,7 @@ A procurement notebook for a fictional Ahmedabad print agency: compare paper sup
 
 **Python · Flask · SQLite · RapidOCR / ONNX Runtime · vanilla JavaScript**
 
-Clone commands below use the intended repository URL. If you already have this folder locally, skip `git clone` and `cd`.
+Clone commands below use this project's public repository URL. If you already have this folder locally, skip `git clone` and `cd`.
 
 ## Setup independently
 
@@ -120,7 +120,15 @@ Recorded local result: **69 passed**, **98.68% statement coverage**. This includ
 
 ## Screenshots
 
-Working browser screenshots are captured from the real app and stored under `docs/screenshots/` when the review workflow is completed. The authored quote image under `demo/` is a test input, not a screenshot.
+![Tulna working desktop demo](docs/screenshots/overview.jpg)
+
+![Tulna completed workflow](docs/screenshots/workflow.jpg)
+
+![Tulna mobile demo](docs/screenshots/mobile.jpg)
+
+![Actual local OCR with original source review](docs/screenshots/ocr.jpg)
+
+Real captures from the running local app using fictional records. [Browser verification](docs/BROWSER_CHECKS.md).
 
 ## Learning and next steps
 
